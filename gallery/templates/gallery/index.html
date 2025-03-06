@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Галерея</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=El+Messiri:wght@300;400;700&display=swap');
+
+        body {
+            font-family: 'Object Sans', sans-serif;
+            text-align: center;
+            margin: 0;
+            background: url('{{ background_image_url }}') no-repeat center center fixed;
+            background-size: cover;
+            overflow-x: hidden;
+        }
+        .hero {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: black;
+            overflow: hidden;
+        }
+        .hero img {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+        }
+        .hero-text {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20vw;
+            font-family: 'El Messiri', sans-serif;
+            font-weight: 300;
+            color: white;
+            white-space: nowrap;
+            text-transform: uppercase;
+            line-height: 0.9;
+            z-index: 2;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            max-width: 90vw;
+            max-height: 90vh;
+            z-index: 3;
+        }
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .heart {
+            position: absolute;
+            color: red;
+            font-size: 50px;
+            opacity: 0.8;
+        }
+        .gallery {
+            max-width: 800px;
+            margin: 50px auto;
+            position: relative;
+        }
+        .photo {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+            position: relative;
+            margin-bottom: 70px;
+        }
+        .photo img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .caption {
+            position: relative;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 300;
+            color: black;
+            padding: 5px 10px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        .visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .visible .caption {
+            opacity: 1;
+        }
+        footer {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-text">{{ hero_text }}</div>
+        <img src="{{ hero_image_url }}" alt="Главное изображение">
+        {% if hero_overlay_url %}
+            <img src="{{ hero_overlay_url }}" alt="Наслаивающееся изображение" class="hero-overlay">
+        {% endif %}
+    </div>
+
+    <div class="floating-hearts">
+        {% for heart in floating_hearts %}
+            <div class="heart" style="top: {{ heart.top }}%; left: {{ heart.left }}%; font-size: {{ heart.size }}px;">❤️</div>
+        {% endfor %}
+    </div>
+
+    <div class="gallery">
+        {% for photo in photos %}
+            <div class="photo">
+                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}">
+                <div class="caption">{{ photo.caption }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <p>© 2025 Название компании</p>
+        <p>Адрес: ул. Примерная, 1, Город</p>
+        <p>Email: example@email.com | Телефон: +7 123 456-78-90</p>
+    </footer>
+
+    <script>
+        function revealPhotos() {
+            let photos = document.querySelectorAll('.photo');
+            let windowHeight = window.innerHeight;
+
+            photos.forEach(photo => {
+                let rect = photo.getBoundingClientRect();
+                if (rect.top < windowHeight - 100) {
+                    photo.classList.add('visible');
+                }
+            });
+        }
+
+        function parallaxHearts() {
+            let scrollY = window.pageYOffset;
+            let hearts = document.querySelectorAll('.heart');
+            hearts.forEach(heart => {
+                let speed = 0.5;
+                let yOffset = scrollY * speed;
+                heart.style.transform = `translateY(${yOffset}px)`;
+            });
+        }
+
+        window.addEventListener('scroll', revealPhotos);
+        window.addEventListener('scroll', parallaxHearts);
+        window.addEventListener('load', revealPhotos);
+    </script>
+</body>
+</html>
